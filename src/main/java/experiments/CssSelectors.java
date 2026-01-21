@@ -19,6 +19,9 @@ public class CssSelectors {
         driver.get("https://demoqa.com/");
         driver.manage().window().maximize();
         pause(3);
+        hideBanner();
+        hideFooter();
+        pause(3);
         driver.navigate().to("https://demoqa.com/elements");
         pause(3);
         driver.navigate().back();
@@ -62,5 +65,13 @@ public class CssSelectors {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void hideBanner(){
+        JavascriptExecutor js =(JavascriptExecutor) driver;
+        js.executeScript("document.querySelector('#fixedban').style.display ='none'");
+    }
+    public void hideFooter(){
+        JavascriptExecutor js =(JavascriptExecutor) driver;
+        js.executeScript("document.querySelector('footer').style.display='none'");
     }
 }
