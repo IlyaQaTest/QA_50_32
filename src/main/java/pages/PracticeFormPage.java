@@ -1,5 +1,9 @@
 package pages;
 
+import dto.Student;
+import enums.Gender;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -9,7 +13,7 @@ import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 public class PracticeFormPage extends BasePage {
     public PracticeFormPage(WebDriver driver) {
         setDriver(driver);
-        PageFactory.initElements(new AjaxElementLocatorFactory(driver, 10), this);
+        PageFactory.initElements(new AjaxElementLocatorFactory(driver, 15), this);
     }
 
     @FindBy(xpath = "//input[@placeholder='First Name']")
@@ -34,6 +38,55 @@ public class PracticeFormPage extends BasePage {
     WebElement btnSubmit;
     @FindBy(id = "example-modal-sizes-title-lg")
     WebElement modalMessage;
+
+    public void typePracticeForm(Student student) {
+        hideBanner();
+        hideFooter();
+        scroll();
+        inputName.sendKeys(student.getName());
+        inputLastName.sendKeys(student.getLastName());
+        inputUserEmail.sendKeys(student.getEmail());
+        inputMobile.sendKeys(student.getMobile());
+        inputAddress.sendKeys(student.getAddress());
+        typeGender(student.getGender());
+        typeDateOfBirth(student.getDateOfBirth());
+        typeSubjects(student.getSubject());
+        btnSubmit.click();
+    }
+
+    public boolean validateModalMessage(String text) {
+        return validateTextInElement(modalMessage, text);
+    }
+
+    private void typeGender(Gender gender) {
+        WebElement btnGender = driver.findElement(By.xpath(gender.getLocator()));
+        btnGender.click();
+    }
+
+    private void typeDateOfBirth(String dateOfBirth) {
+        fieldDateOfBirt.click();
+        String operationSystem = System.getProperty("os.name");// find system
+        System.out.println("OS.NAME = " + operationSystem);
+        if (operationSystem.startsWith("win"))
+            fieldDateOfBirt.sendKeys(Keys.chord(Keys.CONTROL, "a"));// select all win
+        else if (operationSystem.startsWith("Mac"))
+            fieldDateOfBirt.sendKeys(Keys.chord(Keys.COMMAND, "a"));// select all mac
+        // 2. Очищаем поле через JavaScript напрямую
+        ((org.openqa.selenium.JavascriptExecutor) driver)
+                .executeScript("arguments[0].value = '';", fieldDateOfBirt);
+        fieldDateOfBirt.sendKeys(dateOfBirth);
+        fieldDateOfBirt.sendKeys(Keys.ENTER);
+    }
+
+    private void typeSubjects(String subjects) {
+        inputSubject.click();
+        String[] arr = subjects.split(",");// massive
+        for (String s : arr) {
+            inputSubject.sendKeys(s);
+            inputSubject.sendKeys(Keys.ENTER);
+        }
+
+    }
 
 
 }
